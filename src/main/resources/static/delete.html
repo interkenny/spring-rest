@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>マルチ属性削除</title>
+    <script src="//code.jquery.com/jquery-1.9.1.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+          integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
+            integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+            crossorigin="anonymous"></script>
+    <style>
+        .col-center-block {
+            float: none;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <ul class="nav nav-pills">
+        <li><a href="#">確認メニュー</a></li>
+        <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                ユーザWebサービス <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li><a href="#">ユーザ登録</a></li>
+                <li><a href="#">ユーザ確認</a></li>
+                <li><a href="#">ユーザ認証</a></li>
+            </ul>
+        </li>
+        <li><a href="sourceId.html">ソースID払出し</a></li>
+        <li class="dropdown active">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                マルチ属性管理Webサービス <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li><a href="add.html">属性登録</a></li>
+                <li><a href="get.html">属性取得</a></li>
+                <li><a href="update.html">属性更新</a></li>
+                <li class="active"><a href="delete.html">属性削除</a></li>
+            </ul>
+        </li>
+    </ul>
+</div>
+<div class="container-fluid">
+    <div class="row myCenter">
+        <div class="col-sm-8 col-center-block">
+
+            <form id="reqform" class="form-horizontal">
+                <fieldset>
+                    <legend>属性項目</legend>
+                    <div class="form-group">
+                        <label class="control-label col-lg-2" for="userId">ユーザID</label>
+                        <div class="col-lg-10">
+                            <input class="form-control input-xs" id="userId" name="userId" type="text">
+                        </div>
+                    </div> <div class="form-group"> <label class="control-label col-lg-2" for="password">パスワード</label>
+                        <div class="col-lg-10">
+                            <input class="form-control input-xs" id="password" name="password" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-lg-2" for="sourceid">ソースid</label>
+                        <div class="col-lg-10">
+                            <input class="form-control input-xs" id="sourceid" name="sourceid" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-lg-2" for="defid">マルチ属性定義id</label>
+                        <div class="col-md-10">
+                            <input class="form-control input-xs" id="defid" name="defid" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-lg-2" for="multiattrname">マルチ属性定義名</label>
+                        <div class="col-lg-10">
+                            <input class="form-control input-xs" id="multiattrname" name="multiattrname" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-lg-2" for="fid">地物ID</label>
+                        <div class="col-lg-10">
+                            <input class="form-control input-xs" id="fid" name="fid" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-lg-2" for="other">ほか</label>
+                        <div class="col-lg-10">
+                            <input class="form-control input-xs" id="other" name="other" type="text">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-lg-10 col-lg-offset-2">
+                            <button type="reset" class="btn btn-default">クリア</button>
+                            <button type="submit" class="btn btn-primary">削除</button>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>
+<div id="result"></div>
+
+<script>
+    $("#reqform").submit(function (e) {
+        $('#result').empty();
+
+        e.preventDefault();
+        var jsonData = {};
+        var formData = $("#reqform").serializeArray();
+        $.each(formData, function () {
+            if (jsonData[this.name]) {
+                if (!jsonData[this.name].push) {
+                    jsonData[this.name] = [jsonData[this.name]];
+                }
+                jsonData[this.name].push(this.value || '');
+            } else {
+                jsonData[this.name] = this.value || '';
+            }
+        });
+        console.log(jsonData);
+        $.ajax({
+            type: "GET",
+            url: "http://localhost:9000/request",
+            dataType: 'json',
+            contentType: 'application/json;charset=utf-8',
+            cache: false,
+            data: jsonData,
+            success: function (callback) {
+                console.log(callback);
+                var table = $('<table></table>').addClass('table table-striped table-hover');
+                $.each(callback, function (index, element) {
+                    var row = $('<tr></tr>').text(element);
+                    table.append(row);
+                });
+                $('#result').append(table);
+            },
+            error: function () {
+                $('body').append($('<table>NG</table>'));
+            }
+        });
+    });
+
+</script>
+
+</body>
+</html>

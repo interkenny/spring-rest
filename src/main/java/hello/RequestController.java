@@ -11,11 +11,20 @@ import java.io.IOException;
 public class RequestController {
     private Logger logger = LoggerFactory.getLogger(RequestController.class);
 
+    private RequestService requestService;
+
     @CrossOrigin
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
-    public Request request(@ModelAttribute("request") Request request) throws IOException {
+    public Respons request(@ModelAttribute("request") Request request) throws IOException {
         logger.info("リクエスト情報: {} ", request.toString());
+
+        //requestService.save(request);
+        Respons respons = new Respons();
+        respons.setCode("6666");
+        respons.setMessage("テスト");
+        respons.setData(request.getRecords());
+
         logger.info("レスポンス: {}", request.toString());
-        return request;
+        return respons;
     }
 }

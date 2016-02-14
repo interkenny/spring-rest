@@ -5,16 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 public class Request implements Serializable {
-  private String id;
-    private List<Map<String,String>> records;
 
-    public String getId() {
-        return id;
-    }
+    private String resourceId;
+    private List<Map<String, String>> records;
 
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public List<Map<String, String>> getRecords() {
         return records;
@@ -27,8 +21,16 @@ public class Request implements Serializable {
     @Override
     public String toString() {
         return "Request{" +
-                "id='" + id + '\'' +
+                "id='" + resourceId + '\'' +
                 ", records=" + records +
                 '}';
+    }
+
+    public String getResourceId() {
+        return resourceId;
+    }
+
+    public void setResourceId(String resourceId) {
+        this.resourceId = resourceId;
     }
 }
